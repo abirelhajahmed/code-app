@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 require('dotenv').config()
 
 const routerUsers = require('./routes/users.route')
+mongoose.set('strictQuery', false)
 
 var app = express();
 
