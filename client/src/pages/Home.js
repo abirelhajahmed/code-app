@@ -53,11 +53,19 @@ function Home() {
     }
    }
   /* find all users */
-  useEffect(async () => {
-    await axios.get("/api/users").then((res) => {
-      setUsers(res.data);
-    });
-  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/api/users");
+        setUsers(response.data);
+      } catch (error) {
+        // Handle any error that occurred during the request
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
   return (
     <div className="row p-4">
       <Alert message={message} show={show}/>

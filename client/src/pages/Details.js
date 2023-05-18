@@ -28,11 +28,19 @@ function Details() {
     
   }
 
-  useEffect(async () => {
-    await axios.get(`/api/users/${id}`).then((res) => {
-      setForm(res.data);
-    });
-  }, []);
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`/api/users/${id}`);
+      setForm(response.data);
+    } catch (error) {
+      // Handle any error that occurred during the request
+    }
+  };
+
+  fetchData();
+}, []);
+
   return (
     <div className="container mt-4 col-12 col-lg-4">
         <form onSubmit={onSubmitHandler}>
