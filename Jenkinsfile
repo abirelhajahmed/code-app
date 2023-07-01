@@ -10,8 +10,5 @@ pipeline{
                   git 'https://github.com/abirelhajahmed/code-app.git'
                }
         }
-
-        
-
     }
 }
