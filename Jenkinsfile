@@ -1,14 +1,13 @@
 pipeline{
 
-    agent any 
-
+    agent any
+    
     stages{
-
         stage('Checkout SCM'){
-
-             steps {
-                  git 'https://github.com/abirelhajahmed/code-app.git'
-               }
+            steps {
+                git branch: 'main', url: 'https://github.com/abirelhajahmed/code-app.git'
+            }
         }
     }
 }
+
