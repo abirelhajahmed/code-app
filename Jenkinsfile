@@ -1,8 +1,8 @@
 pipeline {
     environment {
-    backendImageName = "abirelhajahmed/bacKend"
+    backendImageName = "abirelhajahmed/backend"
     backendImageTag = "${BUILD_NUMBER}"
-    frontendImageName = "abirelhajahmed/fronTend"
+    frontendImageName = "abirelhajahmed/frontend"
     frontendImageTag = "${BUILD_NUMBER}"
   }
 
