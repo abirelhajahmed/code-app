@@ -78,15 +78,3 @@ pipeline {
 
   }
 }
-post {
-    always {
-      script {
-        def pipelineStatus = currentBuild.result
-        def emailBody = pipelineStatus == 'SUCCESS' ? "La pipeline CI/CD a été exécutée avec succès." : "La pipeline CI/CD a été exécutée en échec."
-        emailext subject: "Rapport d'exécution de la pipeline CI/CD",
-                  body: emailBody,
-                  to: "abirelhajahmed@gmail.com",
-                  attachLog: true
-      }
-    }
-  }
