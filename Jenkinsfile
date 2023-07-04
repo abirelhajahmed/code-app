@@ -8,19 +8,17 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Install dependencies') {
             steps {
                 sh 'npm install'
             }
         }
 
-        stage('Test') {
-            environment {
-                MONGO_URI = sh(script: 'echo $MONGO_URI', returnStdout: true).trim()
-            }
-            steps {
-                sh 'npx mocha tests/user.test.js'
-            }
+        stage('Run Backend Tests') {
+           steps {
+               sh 'npm test'
+           }
         }
+
     }
 }
