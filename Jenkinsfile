@@ -1,5 +1,13 @@
 pipeline {
+    environment {
+    backendImageName = "abirelhajahmed/bacKend"
+    backendImageTag = "${BUILD_NUMBER}"
+    frontendImageName = "abirelhajahmed/fronTend"
+    frontendImageTag = "${BUILD_NUMBER}"
+  }
+
     agent any
+
 
     stages {
         stage('Checkout SCM') {
@@ -19,6 +27,14 @@ pipeline {
                sh 'npm test'
            }
         }
+
+        stage('Build Backend Docker Image') {
+           steps {
+             script {
+                sh "docker build -t ${backendImageName}:${backendImageTag} ."
+        }
+      }
+    }
 
     }
 }
