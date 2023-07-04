@@ -14,7 +14,7 @@ pipeline {
             }
         }
 
-        stage('Run Backend Tests') {
+        stage('Backend Test') {
            steps {
                sh 'npm test'
            }
