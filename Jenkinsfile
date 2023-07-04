@@ -45,6 +45,11 @@ pipeline {
                    }
               }
              }
+        stage('Docker Remove Backend Image') {
+           steps {
+               sh "docker rmi ${backendImageName}:${backendImageTag}"
+            }
+        }    
 
 
     }
