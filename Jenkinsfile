@@ -51,5 +51,15 @@ pipeline {
         sh "docker rmi ${backendImageName}:${backendImageTag}"
       }
     }
+    stage('Build frontend Docker Image') {
+      steps {
+        dir('client') {
+          script {
+            sh "docker build -t ${frontendImageName}:${frontendImageTag} ."
+          }
+        }
+      }
+    }
+
   }
 }
