@@ -45,12 +45,6 @@ pipeline {
         }
       }
     }
-
-    stage('Docker Remove Backend Image') {
-      steps {
-        sh "docker rmi ${backendImageName}:${backendImageTag}"
-      }
-    }
     stage('Build frontend Docker Image') {
       steps {
         dir('client') {
@@ -70,8 +64,9 @@ pipeline {
         }
       }
     }
-     stage('Docker Remove frontend Image') {
+     stage('Docker Remove frontend and backend Images') {
       steps {
+        sh "docker rmi ${backendImageName}:${backendImageTag}"
         sh "docker rmi ${frontendImageName}:${frontendImageTag}"
       }
     }
