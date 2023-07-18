@@ -45,6 +45,7 @@ pipeline {
         }
       }
     }
+
     stage('Build frontend Docker Image') {
       steps {
         dir('client') {
@@ -54,7 +55,8 @@ pipeline {
         }
       }
     }
-     stage('Push frontend Docker Image') {
+
+    stage('Push frontend Docker Image') {
       steps {
         script {
           withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
@@ -64,12 +66,40 @@ pipeline {
         }
       }
     }
-     stage('Docker Remove frontend and backend Images') {
+
+    stage('Remove frontend and backend Docker Images') {
       steps {
         sh "docker rmi ${backendImageName}:${backendImageTag}"
         sh "docker rmi ${frontendImageName}:${frontendImageTag}"
       }
     }
 
+    stage('Update Kubernetes Deployment Files') {
+      steps {
+        script {
+          sh """
+            cat backend-deployment.yaml
+            sed -i 's|{backend_image_name}:{backend_image_tag}|${backendImageName}:${backendImageTag}|g' backend-deployment.yaml
+            cat backend-deployment.yaml
+
+            cat frontend-deployment.yaml
+            sed -i 's|{frontend_image_name}:{frontend_image_tag}|${frontendImageName}:${frontendImageTag}|g' frontend-deployment.yaml
+            cat frontend-deployment.yaml
+          """
+        }
+      }
+    }
+
+    stage('Push Deployment File Changes to Git') {
+      steps {
+        script {
+          git config --global user.name "abirelhajahmed"
+          git config --global user.email "abirelhajahmed@gmail.com"
+          git add backend-deployment.yaml frontend-deployment.yaml
+          git commit -m "Update deployment files"
+          git push origin main
+        }
+      }
+    }
   }
 }
