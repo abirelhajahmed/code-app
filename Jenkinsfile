@@ -74,23 +74,19 @@ pipeline {
       }
     }
 
-    stage('Update Kubernetes Deployment Files') {
+    stage('Update Deployment Files') {
       steps {
         script {
-          sh """
-            cat backend-deployment.yaml
-            sed -i 's|{backend_image_name}:{backend_image_tag}|${backendImageName}:${backendImageTag}|g' backend-deployment.yaml
-            cat backend-deployment.yaml
+          git branch: 'main', url: 'https://github.com/abirelhajahmed/deployment-files.git'
 
-            cat frontend-deployment.yaml
-            sed -i 's|{frontend_image_name}:{frontend_image_tag}|${frontendImageName}:${frontendImageTag}|g' frontend-deployment.yaml
-            cat frontend-deployment.yaml
-          """
+          sh "sed -i 's|{backend_image_name}:{backend_image_tag}|${backendImageName}:${backendImageTag}|' backend-deployment.yaml"
+
+          sh "sed -i 's|{frontend_image_name}:{frontend_image_tag}|${frontendImageName}:${frontendImageTag}|' frontend-deployment.yaml"
         }
       }
     }
 
-    stage('Push Deployment File Changes to Git') {
+    stage('Push Deployment Files to Git') {
       steps {
         script {
           git config --global user.name "abirelhajahmed"
