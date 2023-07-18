@@ -76,7 +76,7 @@ pipeline {
 
     stage('Update Deployment Files') {
       steps {
-        checkout([$class: 'GitSCM', branches: [[name: 'main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/abirelhajahmed/deployment-files.git']]])
+        git branch: 'main', url: 'https://github.com/abirelhajahmed/deployment-files.git'
         sh "sed -i 's|{backend_image_name}:{backend_image_tag}|${backendImageName}:${backendImageTag}|' backend-deployment.yaml"
         sh "sed -i 's|{frontend_image_name}:{frontend_image_tag}|${frontendImageName}:${frontendImageTag}|' frontend-deployment.yaml"
       }
