@@ -77,10 +77,11 @@ pipeline {
     stage('Update Deployment Files') {
       steps {
         script {
-          git branch: 'main', url: 'https://github.com/abirelhajahmed/deployment-files.git'
+          withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GIT_TOKEN')]) {
+            git branch: 'main', url: 'https://github.com/abirelhajahmed/deployment-files.git', credentialsId: 'GITHUB_TOKEN', credentialsVariable: 'GIT_TOKEN'
+          }
 
           sh "sed -i 's|{backend_image_name}:{backend_image_tag}|${backendImageName}:${backendImageTag}|' backend-deployment.yaml"
-
           sh "sed -i 's|{frontend_image_name}:{frontend_image_tag}|${frontendImageName}:${frontendImageTag}|' frontend-deployment.yaml"
         }
       }
@@ -89,11 +90,13 @@ pipeline {
     stage('Push Deployment Files to Git') {
       steps {
         script {
-          git config --global user.name "abirelhajahmed"
-          git config --global user.email "abirelhajahmed@gmail.com"
-          git add backend-deployment.yaml frontend-deployment.yaml
-          git commit -m "Update deployment files"
-          git push origin main
+          withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GIT_TOKEN')]) {
+            git config --global user.name "abirelhajahmed"
+            git config --global user.email "abirelhajahmed@gmail.com"
+            git add backend-deployment.yaml frontend-deployment.yaml
+            git commit -m "Update deployment files"
+            git push origin main
+          }
         }
       }
     }
