@@ -40,18 +40,12 @@ pipeline {
       }
     }
 
-    stage('Remove Frontend and Backend Docker Images') {
-      steps {
-        sh "docker rmi ${frontendImageName}:${frontendImageTag}"
-      }
-    }
-
     stage('Update Deployment Files') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
           git branch: 'main',
               credentialsId: 'github',
-              url: 'https://github.com/abirelhajahmed/deployement-files.git'
+              url: 'https://github.com/abirelhajahmed/deployment-files.git'
           sh "sed -i 's|{frontend_image_name}:{frontend_image_tag}|${frontendImageName}:${frontendImageTag}|' frontend-deployment.yaml"
         }
       }
@@ -59,10 +53,12 @@ pipeline {
 
     stage('Push Deployment Files to Git') {
       steps {
-        script {
-          git add 'frontend-deployment.yaml'
-          git commit -m "Update deployment files for frontend image - ${frontendImageTag}"
-          git push origin main
+        withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
+          script {
+            sh "git add frontend-deployment.yaml"
+            sh "git commit -m 'Update deployment files for frontend image - ${frontendImageTag}'"
+            sh "git push origin main"
+          }
         }
       }
     }
