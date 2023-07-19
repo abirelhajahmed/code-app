@@ -46,5 +46,21 @@ pipeline {
       }
     }
 
+    stage('Update Deployment Files') {
+      steps {
+        git branch: 'main', url: 'https://github.com/abirelhajahmed/deployment-files.git'
+        sh "sed -i 's|{frontend_image_name}:{frontend_image_tag}|${frontendImageName}:${frontendImageTag}|' frontend-deployment.yaml"
+      }
+    }
+
+    stage('Push Deployment Files to Git') {
+      steps {
+        script {
+          git add 'frontend-deployment.yaml'
+          git commit -m "Update deployment files for frontend image - ${frontendImageTag}"
+          git push origin main
+        }
+      }
+    }
   }
 }
