@@ -51,7 +51,7 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
           git branch: 'main',
               credentialsId: 'github',
-              url: 'https://github.com/abirelhajahmed/deployment-files.git'
+              url: 'https://github.com/abirelhajahmed/deployement-files.git'
           sh "sed -i 's|{frontend_image_name}:{frontend_image_tag}|${frontendImageName}:${frontendImageTag}|' frontend-deployment.yaml"
         }
       }
