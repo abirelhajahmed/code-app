@@ -1,7 +1,5 @@
 pipeline {
   environment {
-    backendImageName = "abirelhajahmed/backend"
-    backendImageTag = "${BUILD_NUMBER}"
     frontendImageName = "abirelhajahmed/frontend"
     frontendImageTag = "${BUILD_NUMBER}"
   }
@@ -15,38 +13,13 @@ pipeline {
       }
     }
 
-    stage('Install dependencies') {
+    stage('Install Dependencies') {
       steps {
         sh 'npm install'
       }
     }
 
-    stage('Backend Test') {
-      steps {
-        sh 'npm test'
-      }
-    }
-
-    stage('Build Backend Docker Image') {
-      steps {
-        script {
-          sh "docker build -t ${backendImageName}:${backendImageTag} ."
-        }
-      }
-    }
-
-    stage('Push Backend Docker Image') {
-      steps {
-        script {
-          withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-            sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-            sh "docker push ${backendImageName}:${backendImageTag}"
-          }
-        }
-      }
-    }
-
-    stage('Build frontend Docker Image') {
+    stage('Build Frontend Docker Image') {
       steps {
         dir('client') {
           script {
@@ -56,7 +29,7 @@ pipeline {
       }
     }
 
-    stage('Push frontend Docker Image') {
+    stage('Push Frontend Docker Image') {
       steps {
         script {
           withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
@@ -67,30 +40,27 @@ pipeline {
       }
     }
 
-    stage('Remove frontend and backend Docker Images') {
+    stage('Remove Frontend and Backend Docker Images') {
       steps {
-        sh "docker rmi ${backendImageName}:${backendImageTag}"
         sh "docker rmi ${frontendImageName}:${frontendImageTag}"
       }
     }
 
     stage('Update Deployment Files') {
-        steps {
-            git branch: 'main', url: 'https://github.com/abirelhajahmed/deployment-files.git'
-            sh "sed -i 's|{backend_image_name}:{backend_image_tag}|${backendImageName}:${backendImageTag}|' backend-deployment.yaml"
-            sh "sed -i 's|{frontend_image_name}:{frontend_image_tag}|${frontendImageName}:${frontendImageTag}|' frontend-deployment.yaml"
-  }
-}
+      steps {
+        git branch: 'main', url: 'https://github.com/abirelhajahmed/deployment-files.git'
+        sh "sed -i 's|{frontend_image_name}:{frontend_image_tag}|${frontendImageName}:${frontendImageTag}|' frontend-deployment.yaml"
+      }
+    }
 
     stage('Push Deployment Files to Git') {
-       steps {
+      steps {
         script {
-            git add backend-deployment.yaml frontend-deployment.yaml
-            git commit -m "Update deployment files"
-            git push origin main
+          git add 'frontend-deployment.yaml'
+          git commit -m "Update deployment files for frontend image - ${frontendImageTag}"
+          git push origin main
+        }
+      }
     }
-  }
-}
-
   }
 }
