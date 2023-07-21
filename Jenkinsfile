@@ -2,6 +2,8 @@ pipeline {
   environment {
     frontendImageName = "abirelhajahmed/frontend"
     frontendImageTag = "${BUILD_NUMBER}"
+    GIT_USERNAME = credentials('github').username
+    GIT_PASSWORD = credentials('github').password
   }
 
   agent any
@@ -64,7 +66,7 @@ pipeline {
               sh 'git config --global user.name "abirelhajahmed"'
               sh 'git add front-deployement.yaml'
               sh 'git commit -m "Update image tag"'
-              sh 'git push origin main'
+              sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployement-files.git main"
             }
           }
         }
