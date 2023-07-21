@@ -56,7 +56,7 @@ pipeline {
             
             // Replace the image tag in the YAML file
             def newImageTag = "${frontendImageName}:${frontendImageTag}"
-            sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' deployement-files"
+            sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployement.yaml"
 
             // Commit and push the changes using the git credentials
             withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
