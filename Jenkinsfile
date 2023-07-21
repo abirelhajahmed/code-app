@@ -43,8 +43,10 @@ pipeline {
     stage('Update Image Tag in External Repo') {
       steps {
         script {
-          // Clone the external repository
-          sh 'git clone https://github.com/abirelhajahmed/deployement-files.git deployement-files'
+          // Check if the external repository is already cloned
+          if (!fileExists("deployement-files")) {
+            sh 'git clone https://github.com/abirelhajahmed/deployement-files.git deployement-files'
+          }
           dir("deployement-files") {
             // Replace the image tag in the YAML file
             def newImageTag = "${frontendImageName}:${frontendImageTag}"
