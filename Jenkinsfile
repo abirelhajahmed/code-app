@@ -56,13 +56,13 @@ pipeline {
             
             // Replace the image tag in the YAML file
             def newImageTag = "${frontendImageName}:${frontendImageTag}"
-            sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployment.yaml"
+            sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' deployement-files"
 
             // Commit and push the changes using the git credentials
             withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
               sh 'git config --global user.email "abirelhajahmed@gmail.com"'
               sh 'git config --global user.name "abirelhajahmed"'
-              sh 'git add front-deployment.yaml'
+              sh 'git add front-deployement.yaml'
               sh 'git commit -m "Update image tag"'
               sh 'git push origin main'
             }
