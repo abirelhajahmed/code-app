@@ -50,23 +50,6 @@ pipeline {
       }
     }
 
-    stage('Update Deployment Files') {
-      steps {
-        git branch: 'main', url: 'https://github.com/abirelhajahmed/deployment-files.git'
-        sh "sed -i 's|{backend_image_name}:{backend_image_tag}|${backendImageName}:${backendImageTag}|' backend-deployment.yaml"
-      }
-    }
-
-    stage('Push Deployment Files to Git') {
-      steps {
-        script {
-          git add backend-deployment.yaml
-          git commit -m "Update deployment files"
-          git push origin main
-        }
-      }
-    }
-
     stage('Update Image Tag in External Repo') {
       steps {
         script {
