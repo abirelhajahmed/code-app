@@ -2,8 +2,6 @@ pipeline {
   environment {
     frontendImageName = "abirelhajahmed/frontend"
     frontendImageTag = "${BUILD_NUMBER}"
-    GIT_USERNAME = credentials('github').username
-    GIT_PASSWORD = credentials('github').password
   }
 
   agent any
