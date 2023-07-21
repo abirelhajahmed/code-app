@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Checkout SCM') {
       steps {
-        git branch: 'master', url: 'https://github.com/abirelhajahmed/code-app.git'
+        git branch: 'back', url: 'https://github.com/abirelhajahmed/code-app.git'
       }
     }
 
