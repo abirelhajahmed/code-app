@@ -44,7 +44,6 @@ pipeline {
       }
     }
 
-
     stage('Remove backend Docker Image') {
       steps {
         sh "docker rmi ${backendImageName}:${backendImageTag}"
@@ -52,23 +51,23 @@ pipeline {
     }
 
     stage('Update Deployment Files') {
-        steps {
-            git branch: 'main', url: 'https://github.com/abirelhajahmed/deployment-files.git'
-            sh "sed -i 's|{backend_image_name}:{backend_image_tag}|${backendImageName}:${backendImageTag}|' backend-deployment.yaml"
-           
-  }
-}
+      steps {
+        git branch: 'main', url: 'https://github.com/abirelhajahmed/deployment-files.git'
+        sh "sed -i 's|{backend_image_name}:{backend_image_tag}|${backendImageName}:${backendImageTag}|' backend-deployment.yaml"
+      }
+    }
 
     stage('Push Deployment Files to Git') {
-       steps {
+      steps {
         script {
-            git add backend-deployment.yaml
-            git commit -m "Update deployment files"
-            git push origin main
+          git add backend-deployment.yaml
+          git commit -m "Update deployment files"
+          git push origin main
+        }
+      }
     }
-  }
-}
-stage('Update Image Tag in External Repo') {
+
+    stage('Update Image Tag in External Repo') {
       steps {
         script {
           // Print the current working directory
@@ -83,8 +82,8 @@ stage('Update Image Tag in External Repo') {
             sh 'ls -la'
             
             // Replace the image tag in the YAML file
-            def newImageTag = "${frontendImageName}:${frontendImageTag}"
-            sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' backend-deployement.yaml"
+            def newImageTag = "${backendImageName}:${backendImageTag}"
+            sh "sed -i 's#image: abirelhajahmed/backend.*#image: ${newImageTag}#g' backend-deployement.yaml"
 
             // Commit and push the changes using the git credentials
             withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
@@ -97,6 +96,6 @@ stage('Update Image Tag in External Repo') {
           }
         }
       }
-
+    }
   }
 }
