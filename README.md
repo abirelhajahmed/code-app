@@ -22,7 +22,7 @@ change the content of MONGO_URI in your .env file with you access URI mongoDB cl
 
 #Add user
 
-/api/users (POST)
+/api/users (POST)/
 
 #Get all users
 
