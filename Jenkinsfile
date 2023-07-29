@@ -69,7 +69,11 @@ pipeline {
               sh 'git config --global user.name "abirelhajahmed"'
               sh 'git add front-deployement.yaml'
               sh 'git commit -m "Update image tag"'
-              sh 'git pull origin main'
+              // Fetch the latest changes from the remote 'main' branch
+              sh 'git fetch origin'
+
+                // Rebase the current branch on top of the latest 'main'
+              sh 'git rebase origin/main'
               sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployement-files.git main"
             }
           }
