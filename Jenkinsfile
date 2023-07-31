@@ -51,7 +51,7 @@ pipeline {
                 script {
                     // Print the current working directory
                     sh 'pwd'
-                    
+
                     // Check if the external repository is already cloned
                     if (!fileExists("deployement-files")) {
                         sh 'git clone https://github.com/abirelhajahmed/deployement-files.git deployement-files'
@@ -59,19 +59,27 @@ pipeline {
                     dir("deployement-files") {
                         // Print the contents of the directory to verify if the file exists
                         sh 'ls -la'
-                        
+
                         // Replace the image tag in the YAML file
                         def newImageTag = "${frontendImageName}:${frontendImageTag}"
-                        sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployement.yaml"
+                        sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployment.yaml"
 
-                        // Commit and push the changes using the git credentials
-                        withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                            sh 'git config --global user.email "abirelhajahmed@gmail.com"'
-                            sh 'git config --global user.name "abirelhajahmed"'
-                            sh 'git add front-deployement.yaml'
-                            sh 'git commit -m "Update image tag"'
-                            sh 'git pull origin main'
-                            sh "git push  https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployement-files.git main"
+                        // Check for any changes before committing
+                        sh 'git diff --exit-code front-deployment.yaml'
+                        def hasChanges = sh(script: 'git diff --exit-code front-deployment.yaml; echo $?', returnStatus: true)
+
+                        if (hasChanges != 0) {
+                            // Commit the changes using the git credentials
+                            withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                                sh 'git config --global user.email "abirelhajahmed@gmail.com"'
+                                sh 'git config --global user.name "abirelhajahmed"'
+                                sh 'git add front-deployment.yaml'
+                                sh 'git commit -m "Update image tag"'
+                                sh 'git pull origin main'
+                                sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployement-files.git main"
+                            }
+                        } else {
+                            echo "No changes in front-deployment.yaml. Skipping commit and push."
                         }
                     }
                 }
