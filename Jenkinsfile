@@ -1,7 +1,6 @@
 pipeline {
     environment {
         frontendImageName = "abirelhajahmed/frontend"
-        frontendImageTag = "${BUILD_NUMBER}"
     }
 
     agent any
@@ -19,59 +18,52 @@ pipeline {
             }
         }
 
-        stage('Build Frontend Docker Image') {
+        stage('Sonarqube code analysis') {
+            steps {
+                dir('client') {
+                    sh 'npm run sonar'
+                }
+            }
+        }
+
+        stage('Build and Push Docker Image') {
             steps {
                 dir('client') {
                     script {
-                        sh "docker build -t ${frontendImageName}:${frontendImageTag} ."
+                        def frontendImageTag = "${BUILD_NUMBER}"
+                        def dockerImage = "${frontendImageName}:${frontendImageTag}"
+                        
+                        sh "docker build -t ${dockerImage} ."
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                            sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                            sh "docker push ${dockerImage}"
+                        }
                     }
                 }
-            }
-        }
-
-        stage('Push Frontend Docker Image') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-                        sh "docker push ${frontendImageName}:${frontendImageTag}"
-                    }
-                }
-            }
-        }
-
-        stage('Remove Frontend Image') {
-            steps {
-                sh "docker rmi ${frontendImageName}:${frontendImageTag}"
             }
         }
 
         stage('Update Image Tag in External Repo') {
             steps {
                 script {
-                    // Print the current working directory
-                    sh 'pwd'
-                    
-                    // Check if the external repository is already cloned
-                    if (!fileExists("deployement-files")) {
-                        sh 'git clone https://github.com/abirelhajahmed/deployement-files.git deployement-files'
-                    }
-                    dir("deployement-files") {
-                        // Print the contents of the directory to verify if the file exists
-                        sh 'ls -la'
-                        
-                        // Replace the image tag in the YAML file
-                        def newImageTag = "${frontendImageName}:${frontendImageTag}"
-                        sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployement.yaml"
+                    def frontendImageTag = "${BUILD_NUMBER}"
+                    def newImageTag = "${frontendImageName}:${frontendImageTag}"
 
-                        // Commit and push the changes using the git credentials
+                    if (!fileExists("deployment-files")) {
+                        sh 'git clone https://github.com/abirelhajahmed/deployment-files.git deployment-files'
+                    }
+
+                    dir("deployment-files") {
+                        sh 'ls -la'
+                        sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployment.yaml"
+
                         withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                             sh 'git config --global user.email "abirelhajahmed@gmail.com"'
                             sh 'git config --global user.name "abirelhajahmed"'
-                            sh 'git add front-deployement.yaml'
+                            sh 'git add front-deployment.yaml'
                             sh 'git commit -m "Update image tag"'
                             sh 'git pull origin main'
-                            sh "git push  https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployement-files.git main"
+                            sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployment-files.git main"
                         }
                     }
                 }
