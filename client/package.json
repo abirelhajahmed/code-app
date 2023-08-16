@@ -21,8 +21,7 @@
     "eject": "react-scripts eject",
     "coverage": "react-scripts test --coverage",
     "test-sonar": "react-scripts test --watchAll=false --coverage --testResultsProcessor jest-sonar-reporter",
-    "sonar": "node_modules/.bin/sonar-scanner",
-    "sonar": "sonar-scanner"
+    "sonar": "node_modules/.bin/sonar-scanner"
   },
   "eslintConfig": {
     "extends": [
