@@ -21,7 +21,7 @@
     "eject": "react-scripts eject",
     "coverage": "react-scripts test --coverage",
     "test-sonar": "react-scripts test --watchAll=false --coverage --testResultsProcessor jest-sonar-reporter",
-    "sonar-scanner": "node_modules/sonar-scanner/bin/sonar-scanner",
+    "sonar": "node_modules/.bin/sonar-scanner",
     "sonar": "sonar-scanner"
   },
   "eslintConfig": {
@@ -46,6 +46,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "jest-sonar-reporter": "^2.0.0",
+    "sonar-scanner": "^3.1.0",
     "sonarqube-scanner": "^3.0.1"
   }
 }
