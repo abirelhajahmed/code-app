@@ -19,6 +19,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "coverage": "react-scripts test --coverage",
     "test-sonar": "react-scripts test --watchAll=false --coverage --testResultsProcessor jest-sonar-reporter",
     "sonar-scanner": "node_modules/sonar-scanner/bin/sonar-scanner",
     "sonar": "sonar-scanner"
