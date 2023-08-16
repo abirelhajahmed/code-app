@@ -45,6 +45,7 @@
   "proxy": "http://backend-service:3700",
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "jest-sonar-reporter": "^2.0.0",
     "sonarqube-scanner": "^3.0.1"
   }
 }
