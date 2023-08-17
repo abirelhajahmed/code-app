@@ -18,6 +18,11 @@ pipeline {
         sh 'npm install'
       }
     }
+    stage('Sonarqube code analysis') {
+      steps {
+        sh 'npm run sonar'
+            }
+        }
 
     stage('Backend Test') {
       steps {
