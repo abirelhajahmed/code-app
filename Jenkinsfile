@@ -66,12 +66,12 @@ pipeline {
                     }
 
                     dir("deployment-files") {
-                        sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployment.yaml"
+                        sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployement.yaml"
 
                         withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                             sh 'git config --global user.email "abirelhajahmed@gmail.com"'
                             sh 'git config --global user.name "abirelhajahmed"'
-                            sh 'git add front-deployment.yaml'
+                            sh 'git add front-deployement.yaml'
                             sh 'git commit -m "Update image tag"'
 
                             // Pull the latest changes from the remote 'main' branch
