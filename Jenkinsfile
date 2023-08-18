@@ -62,7 +62,7 @@ pipeline {
 
                     // Check if the external repository is already cloned
                     if (!fileExists("deployment-files")) {
-                        sh 'git clone https://github.com/abirelhajahmed/deployment-files.git deployment-files'
+                        sh 'git clone https://github.com/abirelhajahmed/deployement-files.git deployment-files'
                     }
 
                     dir("deployment-files") {
