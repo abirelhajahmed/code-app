@@ -1,6 +1,7 @@
 pipeline {
     environment {
         frontendImageName = "abirelhajahmed/frontend"
+        frontendImageTag = "${BUILD_NUMBER}"
     }
 
     agent any
