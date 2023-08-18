@@ -65,17 +65,15 @@ pipeline {
                     }
 
                     dir("deployment-files") {
-                        sh 'ls -la'
-                        sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployment.yaml"
+                       sh 'ls -la'
+                       sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployment.yaml"
 
                         withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                            sh 'git config --global user.email "abirelhajahmed@gmail.com"'
-                            sh 'git config --global user.name "abirelhajahmed"'
-                            sh 'git add front-deployment.yaml'
-                            sh 'git commit -m "Update image tag"'
-                            sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployment-files.git main"
-                        }
-                    }
+                         sh 'git config --global user.email "abirelhajahmed@gmail.com"'
+                         sh 'git config --global user.name "abirelhajahmed"'
+                         sh 'git add front-deployment.yaml'
+                         sh 'git commit -m "Update image tag"'
+                         sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployment-files.git main"
                 }
             }
         }
