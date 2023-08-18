@@ -14,7 +14,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                 dir('client') {
+                dir('client') {
                     sh 'npm install'
                 }
             }
@@ -28,24 +28,32 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image') {
+        stage('Build Backend Docker Image') {
             steps {
-                dir('client') {
-                    script {
-                        def frontendImageTag = "${BUILD_NUMBER}"
-                        def dockerImage = "${frontendImageName}:${frontendImageTag}"
-                        
-                        sh "docker build -t ${dockerImage} ."
-                        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                            sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-                            sh "docker push ${dockerImage}"
-                        }
+                script {
+                    sh "docker build -t ${backendImageName}:${backendImageTag} ."
+                }
+            }
+        }
+
+        stage('Push Backend Docker Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                        sh "docker push ${backendImageName}:${backendImageTag}"
                     }
                 }
             }
         }
 
-        stage('Update Image Tag in External Repo') {
+        stage('Remove backend Docker Image') {
+            steps {
+                sh "docker rmi ${backendImageName}:${backendImageTag}"
+            }
+        }
+
+        stage('Update Image Tag in Frontend External Repo') {
             steps {
                 script {
                     def frontendImageTag = "${BUILD_NUMBER}"
