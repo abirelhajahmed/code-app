@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        stage('Sonarqube code analysis') {
+        stage('Sonarqube Code Analysis') {
             steps {
                 dir('client') {
                     sh 'npm run sonar'
@@ -28,28 +28,28 @@ pipeline {
             }
         }
 
-        stage('Build Backend Docker Image') {
+        stage('Build Frontend Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${backendImageName}:${backendImageTag} ."
+                    sh "docker build -t ${frontendImageName}:${frontendImageTag} ."
                 }
             }
         }
 
-        stage('Push Backend Docker Image') {
+        stage('Push Frontend Docker Image') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-                        sh "docker push ${backendImageName}:${backendImageTag}"
+                        sh "docker push ${frontendImageName}:${frontendImageTag}"
                     }
                 }
             }
         }
 
-        stage('Remove backend Docker Image') {
+        stage('Remove Frontend Docker Image') {
             steps {
-                sh "docker rmi ${backendImageName}:${backendImageTag}"
+                sh "docker rmi ${frontendImageName}:${frontendImageTag}"
             }
         }
 
