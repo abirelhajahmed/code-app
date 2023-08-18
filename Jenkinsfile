@@ -60,12 +60,12 @@ pipeline {
                     def frontendImageTag = "${BUILD_NUMBER}"
                     def newImageTag = "${frontendImageName}:${frontendImageTag}"
 
+                    // Check if the external repository is already cloned
                     if (!fileExists("deployment-files")) {
                         sh 'git clone https://github.com/abirelhajahmed/deployment-files.git deployment-files'
                     }
 
                     dir("deployment-files") {
-                        sh 'ls -la'
                         sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployment.yaml"
 
                         withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
@@ -73,6 +73,11 @@ pipeline {
                             sh 'git config --global user.name "abirelhajahmed"'
                             sh 'git add front-deployment.yaml'
                             sh 'git commit -m "Update image tag"'
+
+                            // Pull the latest changes from the remote 'main' branch
+                            sh 'git pull origin main'
+                            
+                            // Push the changes to the remote repository
                             sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployment-files.git main"
                         }
                     }
