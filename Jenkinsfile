@@ -27,15 +27,17 @@ pipeline {
                     sh 'npm run sonar'
                 }
             }
-        }
+         }
 
         stage('Build Frontend Docker Image') {
             steps {
-                script {
-                    sh "docker build -t ${frontendImageName}:${frontendImageTag} ."
-                }
+              dir('client') {
+              script {
+                 sh "docker build -t ${frontendImageName}:${frontendImageTag} ."
+                 }
+             }
             }
-        }
+         }
 
         stage('Push Frontend Docker Image') {
             steps {
