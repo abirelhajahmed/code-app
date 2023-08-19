@@ -88,4 +88,16 @@ pipeline {
       }
     }
   }
+  post {
+        always {
+            script {
+                def pipelineStatus = currentBuild.result
+                def emailBody = pipelineStatus == 'SUCCESS' ? "Pipeline executed successfully" : "Pipeline failed to execute"
+                emailext subject: "Pipeline Execution Result report",
+                          body: emailBody,
+                          to: "abirelhajahmed@gmail.com",
+                          attachLog: true
+            }
+        }
+    }
 }
