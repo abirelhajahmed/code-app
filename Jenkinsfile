@@ -64,7 +64,7 @@ pipeline {
 
                     // Check if the external repository is already cloned
                     if (!fileExists("deployment-files")) {
-                        sh 'git clone https://github.com/abirelhajahmed/deployment-files.git deployment-files'
+                        sh 'git clone https://github.com/abirelhajahmed/deployement-files.git deployment-files'
                     }
 
                     dir("deployment-files") {
@@ -80,7 +80,7 @@ pipeline {
                             sh 'git pull origin main'
 
                             // Push the changes to the remote repository
-                            sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployment-files.git main"
+                            sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployement-files.git main"
                         }
                     }
                 }
