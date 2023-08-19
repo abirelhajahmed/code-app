@@ -27,17 +27,17 @@ pipeline {
                     sh 'npm run sonar'
                 }
             }
-         }
+        }
 
         stage('Build Frontend Docker Image') {
             steps {
-              dir('client') {
-              script {
-                 sh "docker build -t ${frontendImageName}:${frontendImageTag} ."
-                 }
-             }
+                dir('client') {
+                    script {
+                        sh "docker build -t ${frontendImageName}:${frontendImageTag} ."
+                    }
+                }
             }
-         }
+        }
 
         stage('Push Frontend Docker Image') {
             steps {
@@ -64,26 +64,39 @@ pipeline {
 
                     // Check if the external repository is already cloned
                     if (!fileExists("deployment-files")) {
-                        sh 'git clone https://github.com/abirelhajahmed/deployement-files.git deployment-files'
+                        sh 'git clone https://github.com/abirelhajahmed/deployment-files.git deployment-files'
                     }
 
                     dir("deployment-files") {
-                        sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployement.yaml"
+                        sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployment.yaml"
 
                         withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                             sh 'git config --global user.email "abirelhajahmed@gmail.com"'
                             sh 'git config --global user.name "abirelhajahmed"'
-                            sh 'git add front-deployement.yaml'
+                            sh 'git add front-deployment.yaml'
                             sh 'git commit -m "Update image tag"'
 
                             // Pull the latest changes from the remote 'main' branch
                             sh 'git pull origin main'
-                            
+
                             // Push the changes to the remote repository
-                            sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployement-files.git main"
+                            sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployment-files.git main"
                         }
                     }
                 }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                def pipelineStatus = currentBuild.result
+                def emailBody = pipelineStatus == 'SUCCESS' ? "Pipeline executed successfully" : "Pipeline failed to execute"
+                emailext subject: "Pipeline Execution Result report",
+                          body: emailBody,
+                          to: "abirelhajahmed@gmail.com",
+                          attachLog: true
             }
         }
     }
