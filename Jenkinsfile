@@ -113,13 +113,10 @@ pipeline {
 def sendEmailNotification(buildStatus) {
     emailext (
         subject: "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-        body: """<html>
-                  <body>
-                    <p>${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-                    <p>Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>
-                  </body>
-                  </html>""",
-        to: 'abirelhajahmed@gmail.com',
-        attachLog: true
+        body: """${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+Check console output at ${env.BUILD_URL}""",
+        to: 'abirelhajahmed@gmail.com', // Specify the correct recipient email address here
+        attachLog: true // Attach build log
     )
 }
+
