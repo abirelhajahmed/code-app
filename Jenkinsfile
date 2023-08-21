@@ -97,24 +97,32 @@ pipeline {
         success {
             // This block will be executed if the pipeline succeeds
             script {
-                sendEmailNotification('SUCCESSFUL')
+                 def executedStages = currentBuild.rawBuild.getExecution().getCurrentExecutable().getPreviousBuild().getBuildStages().getStages().name
+                sendEmailNotification('SUCCESSFUL', executedStages)
             }
         }
         
         failure {
             // This block will be executed if the pipeline fails
             script {
-                sendEmailNotification('FAILED')
+                def executedStages = currentBuild.rawBuild.getExecution().getCurrentExecutable().getPreviousBuild().getBuildStages().getStages().name
+                sendEmailNotification('FAILED', executedStages)
             }
         }
     }
 }
+def sendEmailNotification(buildStatus, executedStages) {
+    def formattedStages = executedStages.join('\n  - ')
+    def timestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
 
-def sendEmailNotification(buildStatus) {
     emailext (
         subject: "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-        body: """${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
-Check console output at ${env.BUILD_URL}""",
+        body: """${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'
+Build URL: ${env.BUILD_URL}
+Timestamp: ${timestamp}
+Executed Stages:
+  - ${formattedStages}
+""",
         to: 'abirelhajahmed@gmail.com', // Specify the correct recipient email address here
         attachLog: true // Attach build log
     )
