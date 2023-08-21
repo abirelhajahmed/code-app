@@ -111,9 +111,9 @@ pipeline {
 }
 def sendEmailNotification(buildStatus) {
     emailext (
-        subject: ""CI Pipeline Execution Result",
+        subject: "CI Pipeline Execution Result",
         body: """${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
-Check console output at ${env.BUILD_URL}""",
+        Check console output at ${env.BUILD_URL}""",
         to: 'abirelhajahmed@gmail.com', 
         attachLog: true 
     )
