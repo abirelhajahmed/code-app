@@ -90,14 +90,32 @@ pipeline {
   }
   post {
         always {
+            // This block will be executed regardless of the build result
+            echo 'Pipeline completed'
+        }
+        
+        success {
+            // This block will be executed if the pipeline succeeds
             script {
-                def pipelineStatus = currentBuild.result
-                def emailBody = pipelineStatus == 'SUCCESS' ? "Pipeline executed successfully" : "Pipeline failed to execute"
-                emailext subject: "Pipeline Execution Result report",
-                          body: emailBody,
-                          to: "abirelhajahmed@gmail.com",
-                          attachLog: true
+                sendEmailNotification('SUCCESSFUL')
+            }
+        }
+        
+        failure {
+            // This block will be executed if the pipeline fails
+            script {
+                sendEmailNotification('FAILED')
             }
         }
     }
+}
+def sendEmailNotification(buildStatus) {
+    emailext (
+        subject: "CI Pipeline Execution Result",
+        body: """${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+        Check console output at ${env.BUILD_URL}""",
+        to: 'abirelhajahmed@gmail.com', 
+        attachLog: true 
+    )
+}
 }
