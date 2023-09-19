@@ -63,8 +63,8 @@ pipeline {
                     def newImageTag = "${frontendImageName}:${frontendImageTag}"
 
                     // Check if the external repository is already cloned
-                    if (!fileExists("deployment-files")) {
-                        sh 'git clone https://github.com/abirelhajahmed/deployement-files.git deployment-files'
+                    if (!fileExists("deployement-files")) {
+                        sh 'git clone https://github.com/abirelhajahmed/deployement-files.git deployement-files'
                     }
 
                     dir("deployment-files") {
