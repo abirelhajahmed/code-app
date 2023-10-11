@@ -63,8 +63,8 @@ pipeline {
                     def newImageTag = "${frontendImageName}:${frontendImageTag}"
 
                     // Check if the external repository is already cloned
-                    if (!fileExists("deployement-files")) {
-                        sh 'git clone https://github.com/abirelhajahmed/deployement-files.git deployement-files'
+                    if (!fileExists("Gitops-project")) {
+                        sh 'git clone https://github.com/abirelhajahmed/Gitops-project.gitt Gitops-project'
                     }
 
                     dir("deployment-files") {
@@ -80,7 +80,7 @@ pipeline {
                             sh 'git pull origin main'
 
                             // Push the changes to the remote repository
-                            sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/deployement-files.git main"
+                            sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/Gitops-project.git main"
                         }
                     }
                 }
