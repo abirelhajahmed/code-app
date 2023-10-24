@@ -63,9 +63,9 @@ pipeline {
             def newImageTag = "${frontendImageName}:${frontendImageTag}"
 
             // Clone the external repository
-            sh 'git clone https://github.com/abirelhajahmed/Gitops-project.git Gitops-project'
+            sh 'git clone https://github.com/abirelhajahmed/Gitops-project.git front-project'
 
-            dir("Gitops-project") {
+            dir("front-project") {
                 dir("app") {
                     // Update the image tag in the 'frontend-deployement.yaml' file
                     sh "sed -i 's#image: abirelhajahmed/frontend.*#image: ${newImageTag}#g' front-deployement.yaml"
