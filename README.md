@@ -26,7 +26,7 @@ change the content of MONGO_URI in your .env file with you access URI mongoDB cl
 
 #Get all users
 
-/api/users (GET)
+/api/users (GET)/
 
 #Get one user
 
