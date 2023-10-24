@@ -56,7 +56,7 @@ pipeline {
             }
         }
 
-       stage('Update Image Tag in Frontend External Repo') {
+       stage('Update Image Tag in External Repo') {
          steps {
             script {
             def frontendImageTag = "${BUILD_NUMBER}"
@@ -76,9 +76,6 @@ pipeline {
                     sh 'git config --global user.name "abirelhajahmed"'
                     sh 'git add app/front-deployement.yaml'
                     sh 'git commit -m "Update image tag"'
-
-                    // Pull the latest changes from the remote 'main' branch
-                    sh 'git pull origin main'
 
                     // Push the changes to the remote repository
                     sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/abirelhajahmed/Gitops-project.git main"
